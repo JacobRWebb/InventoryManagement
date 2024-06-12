@@ -2,13 +2,7 @@ package main
 
 import (
 	"log"
-	"os"
 
-	"github.com/JacobRWebb/InventoryManagement/pkg/database"
-	"github.com/JacobRWebb/InventoryManagement/pkg/middleware"
-	"github.com/JacobRWebb/InventoryManagement/pkg/routes"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -19,23 +13,36 @@ func main() {
 		log.Fatal("Error loading .env")
 	}
 
-	engine := html.New("./views", ".html")
+	app
 
-	app := fiber.New(fiber.Config{
-		Views: engine,
-	})
+	// db := database.MustOpen(os.Getenv("DATABASE_NAME"))
+	// passwordHash := passwordhash.NewPasswordHash()
 
-	database.InitDB()
+	// userStore := dbstore.NewUserStore(dbstore.NewUserStoreParams{
+	// 	DB:           db,
+	// 	PasswordHash: passwordHash,
+	// })
 
-	defer database.DB.Close()
+	// engine := html.New("./web/views", ".templ")
 
-	middleware.FiberMiddleware(app)
+	// app := fiber.New(fiber.Config{
+	// 	Views: engine,
+	// })
+
+	// dependant := &Dependant{
+	// 	app: app,
+	// 	db:  db,
+	// 	stores: *&Stores{
+	// 		userStore: *userStore,
+	// 	},
+	// }
+
+	// middleware.FiberMiddleware(app)
 
 	// routes.SwaggerRoute(app)
-	routes.AuthRoute(app)
-	routes.UserRoute(app)
-	routes.RouteNotFound(app)
+	// routes.AuthRoute(app)
+	// routes.UserRoute(app)
+	// routes.RouteNotFound(app)
 
-	app.Listen(":" + os.Getenv("PORT"))
-
+	// app.Listen(":" + os.Getenv("PORT"))
 }

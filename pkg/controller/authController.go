@@ -1,83 +1,87 @@
 package controller
 
-import (
-	"time"
+// import (
+// 	"time"
 
-	"github.com/JacobRWebb/InventoryManagement/pkg/models"
-	"github.com/JacobRWebb/InventoryManagement/pkg/queries"
-	"github.com/JacobRWebb/InventoryManagement/pkg/utils"
-	"github.com/gofiber/fiber/v2"
-	"github.com/google/uuid"
-)
+// 	"github.com/JacobRWebb/InventoryManagement/pkg/models"
+// 	"github.com/JacobRWebb/InventoryManagement/pkg/queries"
+// 	"github.com/JacobRWebb/InventoryManagement/pkg/utils"
+// 	"github.com/gofiber/fiber/v2"
+// 	"github.com/google/uuid"
+// )
 
-func RegisterAccount(c *fiber.Ctx) error {
-	registerAccountRequest := &models.RegisterAccountRequest{}
+// func ViewRegisterAccount(c *fiber.Ctx) error {
+// 	return nil
+// }
 
-	if err := c.BodyParser(registerAccountRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Please try again.",
-		})
-	}
+// func RegisterAccount(c *fiber.Ctx) error {
+// 	registerAccountRequest := &models.RegisterAccountRequest{}
 
-	validate := utils.NewValidator()
+// 	if err := c.BodyParser(registerAccountRequest); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   "Please try again.",
+// 		})
+// 	}
 
-	if err := validate.Struct(registerAccountRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   utils.ValidatorErrors(err),
-		})
-	}
+// 	validate := utils.NewValidator()
 
-	user := &models.User{
-		Id:           uuid.New(),
-		CreatedAt:    time.Now(),
-		ModifiedAt:   time.Now(),
-		Email:        registerAccountRequest.Email,
-		PasswordHash: utils.GeneratePasswordHash(registerAccountRequest.Password),
-	}
+// 	if err := validate.Struct(registerAccountRequest); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   utils.ValidatorErrors(err),
+// 		})
+// 	}
 
-	err := queries.CreateUser(user)
+// 	user := &models.User{
+// 		Id:           uuid.New(),
+// 		CreatedAt:    time.Now(),
+// 		ModifiedAt:   time.Now(),
+// 		Email:        registerAccountRequest.Email,
+// 		PasswordHash: utils.GeneratePasswordHash(registerAccountRequest.Password),
+// 	}
 
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": true,
-			"msg":   err.Error(),
-		})
-	}
+// 	err := queries.CreateUser(user)
 
-	return c.SendStatus(fiber.StatusNotImplemented)
-}
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   err.Error(),
+// 		})
+// 	}
 
-func GetUserByEmail(c *fiber.Ctx) error {
-	getUserByEmailRequest := &models.GetUserByEmailRequest{}
+// 	return c.SendStatus(fiber.StatusNotImplemented)
+// }
 
-	if err := c.BodyParser(getUserByEmailRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Unable to parse request" + err.Error(),
-		})
-	}
+// func GetUserByEmail(c *fiber.Ctx) error {
+// 	getUserByEmailRequest := &models.GetUserByEmailRequest{}
 
-	validate := utils.NewValidator()
+// 	if err := c.BodyParser(getUserByEmailRequest); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   "Unable to parse request" + err.Error(),
+// 		})
+// 	}
 
-	if err := validate.Struct(getUserByEmailRequest); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   utils.ValidatorErrors(err),
-		})
-	}
+// 	validate := utils.NewValidator()
 
-	user, err := queries.GetUserByEmail(getUserByEmailRequest.Email)
+// 	if err := validate.Struct(getUserByEmailRequest); err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   utils.ValidatorErrors(err),
+// 		})
+// 	}
 
-	if err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   utils.ValidatorErrors(err),
-		})
-	}
+// 	user, err := queries.GetUserByEmail(getUserByEmailRequest.Email)
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"user": user,
-	})
-}
+// 	if err != nil {
+// 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+// 			"error": true,
+// 			"msg":   utils.ValidatorErrors(err),
+// 		})
+// 	}
+
+// 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+// 		"user": user,
+// 	})
+// }
