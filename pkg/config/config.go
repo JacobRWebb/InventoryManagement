@@ -5,8 +5,6 @@ import (
 )
 
 type Config struct {
-	GRPCAddr             string `mapstructure:"GRPC_ADDR"`
-	GRPCPort             int    `mapstructure:"GRPC_PORT"`
 	ConsulAddr           string `mapstructure:"CONSUL_ADDR"`
 	ConsulDeregisterTime string `mapstructure:"CONSUL_DEREGISTER_TIME"`
 	ConsulIntervalTime   string `mapstructure:"CONSUL_INTERVAL_TIME"`
@@ -16,8 +14,6 @@ type Config struct {
 func NewConfig() (config *Config, err error) {
 	viper.AutomaticEnv()
 
-	viper.SetDefault("GRPC_ADDR", "127.0.0.1")
-	viper.SetDefault("GRPC_PORT", 50051)
 	viper.SetDefault("CONSUL_ADDR", "http://localhost:8500")
 	viper.SetDefault("CONSUL_DEREGISTER_TIME", "1m")
 	viper.SetDefault("CONSUL_INTERVAL_TIME", "1m")
