@@ -1,13 +1,10 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
-	UserServiceProto "github.com/JacobRWebb/InventoryManagement/pkg/proto/v1/user"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
 	"google.golang.org/grpc"
@@ -27,12 +24,6 @@ func main() {
 		log.Fatalf("Creating Consul Client error: %v", err)
 	}
 
-	// err = consulClient.Register(cfg)
-
-	// if err != nil {
-	// 	log.Fatalf("Consul Client error: %v", err)
-	// }
-
 	addr, port, err := consulClient.FindService("User_Service")
 
 	if err != nil {
@@ -47,30 +38,6 @@ func main() {
 		log.Fatalf("%v", err)
 	}
 
-	client := UserServiceProto.NewServiceClient(conn)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-
-	defer cancel()
-
-	req := &UserServiceProto.CreateUserRequest{
-		Email:    "test@example.com",
-		Password: "password123",
-	}
-
-	resp, err := client.CreateUser(ctx, req)
-	if err != nil {
-		log.Fatalf("CreateUser request failed: %v", err)
-	}
-
-	log.Printf("CreateUser response: %v", resp)
+	// client := UserServiceProto.NewServiceClient(conn)
+	conn.Close()
 }
-
-// conn, err := grpc.Dial(fmt.Sprintf("localhost:%d", cfg.GRPCPort), grpc.WithInsecure(), grpc.WithBlock())
-// if err != nil {
-// 	log.Fatalf("Failed to connect to gRPC server: %v", err)
-// }
-// defer conn.Close()
-
-// client := pb.NewServiceClient(conn)
-
-// ctx, cancel := context.WithTimeout(context.Background(), time.Second)
