@@ -17,6 +17,7 @@ type Config struct {
 	DBUser               string `mapstructure:"DB_USER"`
 	DBPassword           string `mapstructure:"DB_PASSWORD"`
 	DatabaseDSN          string `mapstructure:"DATABASE_DSN"`
+	UserServiceName      string `mapstructure:"USER_SERVICE_NAME"`
 }
 
 func NewConfig() (*Config, error) {
@@ -59,6 +60,7 @@ func setDefaults(v *viper.Viper) {
 		"DB_USER":                "DBUser",
 		"DB_PASSWORD":            "DBPass",
 		"DATABASE_DSN":           "",
+		"USER_SERVICE_NAME":      "",
 	}
 
 	for key, value := range defaults {

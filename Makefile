@@ -44,3 +44,23 @@ env-example:
 	@echo "Creating .env.example file"
 	@sed 's/=.*/=/' .env > .env.example
 	@echo ".env.example file created."
+
+fetch-latest-submodules:
+	@git submodule update --remote --merge
+	@git add submodules
+	@git commit -m "Updated submodules to latest version."
+	@git push
+	clean-proto
+	proto
+
+rebuild-proto:
+	clean-proto
+	proto
+
+.PHONY: css
+css:
+	tailwindcss -i css/input.css -o css/output.css --minify
+
+.PHONY: css-watch
+css-watch:
+	tailwindcss -i css/input.css -o css/output.css --watch

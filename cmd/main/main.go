@@ -1,14 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
+	"github.com/JacobRWebb/InventoryManagement/pkg/server"
+	"github.com/JacobRWebb/InventoryManagement/pkg/store"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func main() {
@@ -24,20 +23,11 @@ func main() {
 		log.Fatalf("Creating Consul Client error: %v", err)
 	}
 
-	addr, port, err := consulClient.FindService("User_Service")
+	store, err := store.NewStore(cfg, consulClient)
 
 	if err != nil {
-		log.Fatalf("Consul service discovery error: %v", err)
+		log.Fatalf("There was an issue creating stores. `%v`", err)
 	}
 
-	target := fmt.Sprintf("%s:%d", addr, port)
-
-	conn, err := grpc.NewClient(target, grpc.WithTransportCredentials(insecure.NewCredentials()))
-
-	if err != nil {
-		log.Fatalf("%v", err)
-	}
-
-	// client := UserServiceProto.NewServiceClient(conn)
-	conn.Close()
+	_ = server.NewServer(cfg, store)
 }
