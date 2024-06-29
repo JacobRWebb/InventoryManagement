@@ -3,8 +3,8 @@ module github.com/JacobRWebb/InventoryManagement
 go 1.22.3
 
 require (
+	github.com/a-h/templ v0.2.731
 	github.com/go-chi/chi/v5 v5.0.14
-	github.com/google/uuid v1.6.0
 	github.com/hashicorp/consul/api v1.29.1
 	github.com/spf13/viper v1.19.0
 	google.golang.org/grpc v1.64.0

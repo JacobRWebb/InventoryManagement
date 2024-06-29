@@ -1,12 +1,16 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
+	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -45,7 +49,16 @@ func (s *Server) applyMiddleware() {
 }
 
 func (s *Server) routes() {
+	workDir, _ := os.Getwd()
+	filesDir := http.Dir(filepath.Join(workDir, "/pkg/web/static"))
+
+	s.r.Handle("/static/*", http.StripPrefix("/static", http.FileServer(filesDir)))
+
+	s.r.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(workDir, "/pkg/web/static/assets/favicon.ico"))
+	})
+
 	s.r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Home"))
+		templates.IndexPage().Render(context.Background(), w)
 	})
 }
