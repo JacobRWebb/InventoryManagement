@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +15,7 @@ import (
 	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"golang.org/x/net/http2"
 )
 
 type Server struct {
@@ -33,9 +36,25 @@ func NewServer(cfg *config.Config, store *store.Store) *Server {
 	s.applyMiddleware()
 	s.routes()
 
-	fmt.Printf("Server Running http://localhost:%s\n", "3333")
+	fmt.Printf("Server Running https://localhost:%s\n", "3333")
 
-	http.ListenAndServe(fmt.Sprintf(":%s", "3333"), r)
+	cert, err := tls.LoadX509KeyPair("certs/pub.pem", "certs/key.pem")
+	if err != nil {
+		log.Fatalf("Error loading certificate: %v", err)
+	}
+
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+
+	srv := &http.Server{
+		Addr:      ":3333",
+		Handler:   r,
+		TLSConfig: tlsConfig,
+	}
+
+	http2.ConfigureServer(srv, &http2.Server{})
+	log.Fatal(srv.ListenAndServeTLS("", ""))
 
 	return s
 }
