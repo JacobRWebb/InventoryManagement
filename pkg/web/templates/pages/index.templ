@@ -1,0 +1,13 @@
+package pages
+
+import (
+    "github.com/JacobRWebb/InventoryManagement/pkg/web/templates/layouts"
+    "github.com/JacobRWebb/InventoryManagement/pkg/web/templates/components"
+)
+
+templ Index() {
+    @layouts.Base("Inventory Management") {
+        @components.Navbar()
+        <h1>Home page</h1>
+    }
+}

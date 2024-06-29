@@ -12,7 +12,7 @@ import (
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
-	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates"
+	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates/pages"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/net/http2"
@@ -78,6 +78,6 @@ func (s *Server) routes() {
 	})
 
 	s.r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		templates.IndexPage().Render(context.Background(), w)
+		pages.Index().Render(context.Background(), w)
 	})
 }

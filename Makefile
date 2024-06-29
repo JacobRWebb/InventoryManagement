@@ -59,8 +59,9 @@ rebuild-proto:
 
 .PHONY: css
 css:
-	tailwindcss -i css/input.css -o css/output.css --minify
+	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build_minify.css --minify
 
 .PHONY: css-watch
 css-watch:
-	tailwindcss -i css/input.css -o css/output.css --watch
+	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build.css --watch
+

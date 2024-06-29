@@ -1,5 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 * {
   padding: unset;
   margin: unset;
   box-sizing: content-box;
+}
+
+html,
+body {
+  height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
