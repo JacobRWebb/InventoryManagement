@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
+	"github.com/JacobRWebb/InventoryManagement/pkg/handlers"
+	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
 	"github.com/JacobRWebb/InventoryManagement/pkg/server"
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
 
@@ -29,5 +31,9 @@ func main() {
 		log.Fatalf("There was an issue creating stores. `%v`", err)
 	}
 
-	_ = server.NewServer(cfg, store)
+	handlers := handlers.NewHandler(store)
+
+	middlewares := middlewares.NewMiddleware(store)
+
+	_ = server.NewServer(cfg, handlers, middlewares)
 }

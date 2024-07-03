@@ -5,7 +5,7 @@
 * {
   padding: unset;
   margin: unset;
-  box-sizing: content-box;
+  box-sizing: border-box;
 }
 
 html,

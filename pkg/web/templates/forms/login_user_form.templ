@@ -1,0 +1,46 @@
+package forms
+
+import "github.com/JacobRWebb/InventoryManagement/pkg/web/templates/components"
+import "github.com/JacobRWebb/InventoryManagement/pkg/models"
+
+templ LoginAccountForm(values models.LoginAccountFormValues, errors map[string]string) {
+	<form hx-post="/login" class="space-y-6" id="loginAccountForm">
+		<div>
+			<label for="email" class="block text-sm font-medium text-gray-700">
+				<i class="fas fa-envelope mr-2"></i>Email
+			</label>
+			<div class="mt-1">
+				@components.Input(components.InputProps{
+					Name:         "email",
+					Value:        values.Email,
+					Type:         "text",
+					AutoComplete: "email",
+					Error:        errors["email"],
+					Placeholder:  "email",
+					Class:        "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+				})
+			</div>
+		</div>
+		<div>
+			<label for="password" class="block text-sm font-medium text-gray-700">
+				<i class="fas fa-lock mr-2"></i>Password
+			</label>
+			<div class="mt-1">
+				@components.InputPassword(components.InputPasswordProps{
+					Name:         "password",
+					Value:        values.Password,
+					AutoComplete: "current-password",
+					Error:        errors["password"],
+					Placeholder:  "••••••••",
+					Class:        "appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm",
+				})
+			</div>
+		</div>
+		<div>
+			<button type="submit" class="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+				<i class="fas fa-sign-in-alt mr-2 flex-shrink-0"></i>
+				<span>Log In</span>
+			</button>
+		</div>
+	</form>
+}

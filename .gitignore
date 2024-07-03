@@ -3,3 +3,6 @@
 # Secrets
 .env
 certs
+
+#
+*_templ.txt

@@ -65,3 +65,6 @@ css:
 css-watch:
 	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build.css --watch
 
+.PHONY: templ-watch
+templ-watch:
+	@templ generate --watch --proxy="https://localhost:3333" --open-browser=false
