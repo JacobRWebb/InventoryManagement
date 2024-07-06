@@ -4,7 +4,10 @@ import (
 	"net/http"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
+	"github.com/gorilla/sessions"
 )
+
+var SessionStore *sessions.CookieStore
 
 type Middleware struct {
 	UserMiddleware UserMiddleware

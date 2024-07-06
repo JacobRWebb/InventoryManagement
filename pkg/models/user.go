@@ -5,6 +5,12 @@ import (
 	"regexp"
 )
 
+type SessionUser struct {
+	Username   string
+	Email      string
+	ProfilePic string
+}
+
 type User struct {
 	Username string
 	Profile  *UserProfile

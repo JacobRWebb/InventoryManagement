@@ -55,24 +55,18 @@ func (h *userHandler) HandleUserLoginPost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// TODO Login User
-	user := &models.User{
-		Username: values.Email,
-		Profile: &models.UserProfile{
-			ProfilePic: "https://ui-avatars.com/api/?name=Jacob+Webb",
-			Email:      values.Email,
-		},
+	sessionUser := &models.SessionUser{
+		Username:   values.Email,
+		Email:      values.Email,
+		ProfilePic: "https://ui-avatars.com/api/?name=Jacob+Webb",
 	}
 
-	session, _ := middlewares.SessionStore.Get(r, "session-name")
-	session.Values["user"] = user
-	session.Save(r, w)
+	middlewares.SaveUserToSession(sessionUser, w, r)
 
 	HxRedirect(w, r, "/")
 }
 
 func (h *userHandler) HandleUserLogoutPost(w http.ResponseWriter, r *http.Request) {
-	// TODO logout user session.
-
+	middlewares.UserLogoutFromSession(w, r)
 	HxRedirect(w, r, "/")
 }

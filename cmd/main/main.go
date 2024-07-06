@@ -1,18 +1,35 @@
 package main
 
 import (
+	"encoding/gob"
 	"log"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
 	"github.com/JacobRWebb/InventoryManagement/pkg/handlers"
 	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
+	"github.com/JacobRWebb/InventoryManagement/pkg/models"
 	"github.com/JacobRWebb/InventoryManagement/pkg/server"
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
+	"github.com/gorilla/sessions"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
 )
 
 func main() {
+
+	gob.Register(&models.SessionUser{})
+
+	cookieSession := sessions.NewCookieStore([]byte("Secret-Key"))
+
+	cookieSession.Options = &sessions.Options{
+		Path:     "/",
+		MaxAge:   86400 * 7,
+		HttpOnly: true,
+		Secure:   true,
+	}
+
+	middlewares.SessionStore = cookieSession
+
 	cfg, err := config.NewConfig()
 
 	if err != nil {
