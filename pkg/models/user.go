@@ -5,21 +5,29 @@ import (
 	"regexp"
 )
 
+type AuthResponse struct {
+	AccessToken  string
+	RefreshToken string
+	TokenType    string
+}
+
 type SessionUser struct {
-	Username   string
+	Id         string
 	Email      string
 	ProfilePic string
 }
 
 type User struct {
-	Username string
-	Profile  *UserProfile
+	Id      string
+	Email   string
+	Profile *UserProfile
 }
 
 type UserProfile struct {
-	ProfilePic  string
-	Email       string
-	PhoneNumber string
+	FirstName          string
+	ProfilePic         string
+	PhoneNumber        string
+	OnboardingComplete bool
 }
 
 type CreateAccountFormValues struct {

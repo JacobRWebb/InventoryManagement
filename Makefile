@@ -1,5 +1,5 @@
-PROTO_ROOT = submodules/InventoryManagement.Protos
-OUTPUT_ROOT = pkg
+PROTO_ROOT = internal/api
+OUTPUT_ROOT = internal/api
 
 PROTO_FILES = $(shell find $(PROTO_ROOT) -name '*.proto')
 
@@ -37,21 +37,10 @@ install-proto-plugins:
 clean-proto:
 	rm -rf $(OUTPUT_ROOT)
 
-add-proto-submodules:
-	@git submodule add https://github.com/JacobRWebb/InventoryManagement.Protos.git submodules/InventoryManagement.Protos
-
 env-example:
 	@echo "Creating .env.example file"
 	@sed 's/=.*/=/' .env > .env.example
 	@echo ".env.example file created."
-
-fetch-latest-submodules:
-	@git submodule update --remote --merge
-	@git add submodules
-	@git commit -m "Updated submodules to latest version."
-	@git push
-	clean-proto
-	proto
 
 rebuild-proto:
 	clean-proto

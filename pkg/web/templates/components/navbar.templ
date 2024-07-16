@@ -34,7 +34,7 @@ templ Navbar(user *models.SessionUser) {
 										<div class="absolute inset-0 bg-gray-300 animate-pulse"></div>
 										<img class="h-full w-full object-cover relative z-10" src={ user.ProfilePic } alt="Profile picture"/>
 									</div>
-									<span class="ml-2">{ user.Username }</span>
+									<span class="ml-2">{ user.Email }</span>
 								</div>
 								<button
 									class="ml-2 text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"

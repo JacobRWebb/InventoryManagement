@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/models"
@@ -22,7 +23,7 @@ func NewUserMiddleware(store *store.Store) UserMiddleware {
 
 func (um userMiddleware) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		_, exist := GetUserFromSession(r)
+		_, exist := GetAuthFromSession(r)
 
 		if !exist {
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
@@ -33,21 +34,24 @@ func (um userMiddleware) AuthMiddleware(next http.HandlerFunc) http.HandlerFunc 
 	}
 }
 
-func getUserSession(r *http.Request) *sessions.Session {
-	session, _ := SessionStore.Get(r, "InventoryManagement")
+func getSession(r *http.Request) *sessions.Session {
+	fmt.Printf("%v", SessionStore)
+	session, err := SessionStore.Get(r, "InventoryManagement")
+	fmt.Printf(err.Error())
+
 	return session
 }
 
-func SaveUserToSession(user *models.SessionUser, w http.ResponseWriter, r *http.Request) {
-	userSession := getUserSession(r)
-	userSession.Values["user"] = *user
+func SaveAuthToSession(authResponse *models.AuthResponse, w http.ResponseWriter, r *http.Request) {
+	userSession := getSession(r)
+	fmt.Println(userSession)
+	userSession.Values["auth_response"] = *authResponse
 	userSession.Save(r, w)
-
 }
 
-func GetUserFromSession(r *http.Request) (*models.SessionUser, bool) {
-	userSession := getUserSession(r)
-	user, ok := userSession.Values["user"].(*models.SessionUser)
+func GetAuthFromSession(r *http.Request) (*models.AuthResponse, bool) {
+	userSession := getSession(r)
+	user, ok := userSession.Values["auth_response"].(*models.AuthResponse)
 
 	if !ok {
 		return nil, false
@@ -57,9 +61,9 @@ func GetUserFromSession(r *http.Request) (*models.SessionUser, bool) {
 }
 
 func UserLogoutFromSession(w http.ResponseWriter, r *http.Request) {
-	userSession := getUserSession(r)
+	userSession := getSession(r)
 
-	userSession.Values["user"] = nil
+	userSession.Values["auth_response"] = nil
 	userSession.Options.MaxAge = -1
 	userSession.Save(r, w)
 }

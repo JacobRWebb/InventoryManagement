@@ -1,84 +1,79 @@
 package store
 
 import (
+	"context"
 	"fmt"
+	"time"
 
+	UserProto "github.com/JacobRWebb/InventoryManagement.Users.Api/pkg/api"
 	"github.com/JacobRWebb/InventoryManagement/pkg/config"
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
-	UserServiceProto "github.com/JacobRWebb/InventoryManagement/pkg/proto/v1/user"
-	"google.golang.org/grpc"
+	grpcprotoclients "github.com/JacobRWebb/InventoryManagement/pkg/grpc_protoclients"
+	"github.com/JacobRWebb/InventoryManagement/pkg/models"
 )
 
 type userStore struct {
-	cfg         *config.Config
-	client      *consul.Client
-	grpcConn    *grpc.ClientConn
-	protoClient UserServiceProto.UserServiceClient
+	cfg          *config.Config
+	client       *consul.Client
+	protoClients *grpcprotoclients.ProtoClients
 }
 
-func NewUserStore(cfg *config.Config, client *consul.Client) (UserStore, error) {
+func NewUserStore(cfg *config.Config, client *consul.Client, protoClients *grpcprotoclients.ProtoClients) (UserStore, error) {
 	us := &userStore{
-		cfg:    cfg,
-		client: client,
-	}
-
-	if err := us.init(); err != nil {
-		return nil, err
+		cfg:          cfg,
+		client:       client,
+		protoClients: protoClients,
 	}
 
 	return us, nil
 }
 
-func (us *userStore) init() error {
-	grpcTarget, err := FetchServiceInfo(us.client, us.cfg.UserServiceName)
-	if err != nil {
-		return fmt.Errorf("fetching service info: %w", err)
+func (us *userStore) RegisterUser(email string, password string) (*models.AuthResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	registerUserRequest := &UserProto.RegisterUserRequest{
+		Email:    email,
+		Password: password,
 	}
 
-	us.grpcConn, err = ConnectGRPC(grpcTarget)
+	response, err := us.protoClients.UserServiceClient.RegisterUser(ctx, registerUserRequest)
+
 	if err != nil {
-		return fmt.Errorf("connecting to gRPC: %w", err)
+		return nil, err
 	}
 
-	us.protoClient = UserServiceProto.NewUserServiceClient(us.grpcConn)
+	ar := &models.AuthResponse{
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		TokenType:    response.TokenType,
+	}
 
-	return nil
+	return ar, nil
 }
 
-// func (us *UserStore) CreateUser(email string, password string) (string, error) {
-// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-// 	defer cancel()
+func (us *userStore) LoginUser(email string, password string) (*models.AuthResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
 
-// 	newUser := &UserServiceProto.CreateUserRequest{
-// 		Email:    email,
-// 		Password: password,
-// 	}
+	loginUserRequest := &UserProto.LoginUserRequest{
+		Email:    email,
+		Password: password,
+	}
 
-// 	response, err := us.protoClient.CreateUser(ctx, newUser)
+	response, err := us.protoClients.UserServiceClient.LoginUser(ctx, loginUserRequest)
 
-// 	if err != nil {
-// 		return "", fmt.Errorf("%v - %v", USER_CREATION_ERROR, err)
-// 	}
+	if err != nil {
+		return nil, err
+	}
 
-// 	switch result := response.Result.(type) {
-// 	case *UserServiceProto.CreateUserResponse_UserId:
-// 		return result.UserId, nil
-// 	case *UserServiceProto.CreateUserResponse_Error:
-// 		return "", USER_CREATION_ERROR
-// 	default:
-// 		return "", USER_CREATION_ERROR
-// 	}
-// }
+	ar := &models.AuthResponse{
+		AccessToken:  response.AccessToken,
+		RefreshToken: response.RefreshToken,
+		TokenType:    response.TokenType,
+	}
 
-// func (us *UserStore) CheckIfEmailExists(email string) bool {
-// 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-// 	defer cancel()
+	fmt.Printf("%v", ar)
 
-// 	response, err := us.protoClient.CheckEmailExist(ctx, &UserServiceProto.CheckEmailExistRequest{Email: email})
-
-// 	if err != nil {
-// 		fmt.Printf("There was an error %v", err)
-// 	}
-
-// 	return response.Exists
-// }
+	return ar, nil
+}

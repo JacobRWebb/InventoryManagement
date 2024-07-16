@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
@@ -8,6 +9,7 @@ import (
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
 	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates/forms"
 	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates/pages"
+	"google.golang.org/grpc/status"
 )
 
 type userHandler struct {
@@ -36,7 +38,19 @@ func (h userHandler) HandleUserCreatePost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	// TODO Create Account
+	_, err := h.store.UserStore.RegisterUser(values.Email, values.Password)
+
+	if err != nil {
+		if grpcErr, ok := status.FromError(err); ok {
+			errors["form"] = grpcErr.Message()
+		} else {
+			errors["form"] = err.Error()
+		}
+
+		Render(w, r, forms.CreateAccountForm(values, errors))
+
+		return
+	}
 
 	HxRedirect(w, r, "/login")
 }
@@ -55,13 +69,22 @@ func (h *userHandler) HandleUserLoginPost(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	sessionUser := &models.SessionUser{
-		Username:   values.Email,
-		Email:      values.Email,
-		ProfilePic: "https://ui-avatars.com/api/?name=Jacob+Webb",
+	ar, err := h.store.UserStore.LoginUser(values.Email, values.Password)
+
+	if err != nil {
+		if grpcErr, ok := status.FromError(err); ok {
+			errors["form"] = grpcErr.Message()
+		} else {
+			errors["form"] = err.Error()
+		}
+
+		Render(w, r, forms.LoginAccountForm(values, errors))
+		return
 	}
 
-	middlewares.SaveUserToSession(sessionUser, w, r)
+	fmt.Printf("\nHandlerUserLoginPost %v", ar)
+
+	middlewares.SaveAuthToSession(ar, w, r)
 
 	HxRedirect(w, r, "/")
 }

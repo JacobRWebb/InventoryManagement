@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
+	grpcprotoclients "github.com/JacobRWebb/InventoryManagement/pkg/grpc_protoclients"
 	"github.com/JacobRWebb/InventoryManagement/pkg/handlers"
 	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
 	"github.com/JacobRWebb/InventoryManagement/pkg/models"
@@ -17,7 +18,7 @@ import (
 
 func main() {
 
-	gob.Register(&models.SessionUser{})
+	gob.Register(&models.AuthResponse{})
 
 	cookieSession := sessions.NewCookieStore([]byte("Secret-Key"))
 
@@ -29,6 +30,9 @@ func main() {
 	}
 
 	middlewares.SessionStore = cookieSession
+	if middlewares.SessionStore == nil {
+		log.Fatal("SessionStore is nil after assignment")
+	}
 
 	cfg, err := config.NewConfig()
 
@@ -42,7 +46,9 @@ func main() {
 		log.Fatalf("Creating Consul Client error: %v", err)
 	}
 
-	store, err := store.NewStore(cfg, consulClient)
+	protoClients := grpcprotoclients.NewProtoClients(cfg, consulClient)
+
+	store, err := store.NewStore(cfg, consulClient, protoClients)
 
 	if err != nil {
 		log.Fatalf("There was an issue creating stores. `%v`", err)
