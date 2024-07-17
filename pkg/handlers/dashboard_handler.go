@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
 	"github.com/JacobRWebb/InventoryManagement/pkg/store"
 	"github.com/JacobRWebb/InventoryManagement/pkg/web/templates/pages"
 )
@@ -22,7 +20,7 @@ func NewDashboardHandler(store *store.Store) DashboardHandler {
 }
 
 func (dh *dashboardHandler) HandleDashboardGet(w http.ResponseWriter, r *http.Request) {
-	ar, _ := middlewares.GetAuthFromSession(r)
-	fmt.Printf("%v", ar)
+	// ar, _ := middlewares.GetAuthFromSession(r)
+	// fmt.Printf("%v", ar)
 	Render(w, r, pages.Index(nil))
 }

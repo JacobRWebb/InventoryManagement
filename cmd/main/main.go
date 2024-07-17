@@ -1,62 +1,51 @@
 package main
 
 import (
-	"encoding/gob"
+	"fmt"
 	"log"
+	"os"
+	"os/signal"
+	"syscall"
 
-	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
-	grpcprotoclients "github.com/JacobRWebb/InventoryManagement/pkg/grpc_protoclients"
-	"github.com/JacobRWebb/InventoryManagement/pkg/handlers"
-	"github.com/JacobRWebb/InventoryManagement/pkg/middlewares"
-	"github.com/JacobRWebb/InventoryManagement/pkg/models"
-	"github.com/JacobRWebb/InventoryManagement/pkg/server"
-	"github.com/JacobRWebb/InventoryManagement/pkg/store"
-	"github.com/gorilla/sessions"
-
-	"github.com/JacobRWebb/InventoryManagement/pkg/config"
+	"github.com/JacobRWebb/InventoryManagement/internal/config"
+	"github.com/JacobRWebb/InventoryManagement/internal/server"
 )
 
 func main() {
+	if err := run(); err != nil {
+		log.Fatalf("Application error: %v", err)
+	}
+}
 
-	gob.Register(&models.AuthResponse{})
-
-	cookieSession := sessions.NewCookieStore([]byte("Secret-Key"))
-
-	cookieSession.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   86400 * 7,
-		HttpOnly: true,
-		Secure:   true,
+func run() error {
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		return fmt.Errorf("failed to load config: %v", err)
 	}
 
-	middlewares.SessionStore = cookieSession
-	if middlewares.SessionStore == nil {
-		log.Fatal("SessionStore is nil after assignment")
-	}
+	logger := log.New(os.Stdout, "", log.LstdFlags)
 
-	cfg, err := config.NewConfig()
+	// consulClient, err := consul.NewClient(cfg)
+	// if err != nil {
+	// 	return fmt.Errorf("error while starting consul client: %v", err)
+	// }
+
+	srv, err := server.NewServer(cfg)
 
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		return fmt.Errorf("error while creating server: %v", err)
 	}
 
-	consulClient, err := consul.NewClient(cfg.ConsulAddr)
+	go func() {
+		logger.Println("Starting Server")
+		server.Run(srv)
+	}()
 
-	if err != nil {
-		log.Fatalf("Creating Consul Client error: %v", err)
-	}
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 
-	protoClients := grpcprotoclients.NewProtoClients(cfg, consulClient)
+	logger.Println("Server exiting")
 
-	store, err := store.NewStore(cfg, consulClient, protoClients)
-
-	if err != nil {
-		log.Fatalf("There was an issue creating stores. `%v`", err)
-	}
-
-	handlers := handlers.NewHandler(store)
-
-	middlewares := middlewares.NewMiddleware(store)
-
-	_ = server.NewServer(cfg, handlers, middlewares)
+	return nil
 }

@@ -3,20 +3,30 @@ package config
 import (
 	"fmt"
 	"os"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/joho/godotenv"
 )
 
 type Config struct {
-	ConsulConfig  ConsulConfig
-	ServiceConfig ServiceConfig
+	ApplicationConfig ApplicationConfig
+	CertsConfig       CertsConfig
+	ConsulConfig      ConsulConfig
+	ServiceConfig     ServiceConfig
+}
+
+type ApplicationConfig struct {
+	Port int `validate:"required"`
+}
+
+type CertsConfig struct {
+	CertificateLocation string `validate:"required"`
+	KeyLocation         string `validate:"required"`
 }
 
 type ConsulConfig struct {
-	Address        string `validate:"required,url"`
-	DeregisterTime string `validate:"required"`
-	IntervalTime   string `validate:"required"`
+	Address string `validate:"required,url"`
 }
 
 type ServiceConfig struct {
@@ -31,10 +41,15 @@ func LoadConfig() (*Config, error) {
 	}
 
 	config := &Config{
+		ApplicationConfig: ApplicationConfig{
+			Port: getEnvAsInt("PORT", 3333),
+		},
+		CertsConfig: CertsConfig{
+			CertificateLocation: getEnv("CERT_CERTIFICATE_LOCATION", "certs/pub.pem"),
+			KeyLocation:         getEnv("CERT_KEY_LOCATION", "certs/key.pem"),
+		},
 		ConsulConfig: ConsulConfig{
-			Address:        getEnv("CONSUL_ADDR", "http://localhost:8500"),
-			DeregisterTime: getEnv("CONSUL_DEREGISTER_TIME", "10m"),
-			IntervalTime:   getEnv("CONSUL_INTERVAL_TIME", "5m"),
+			Address: getEnv("CONSUL_ADDR", "http://localhost:8500"),
 		},
 		ServiceConfig: ServiceConfig{
 			UserServiceName: getEnv("USER_SERVICE_NAME", "User_Service"),
@@ -55,5 +70,13 @@ func getEnv(key string, defaultValue string) string {
 		return value
 	}
 
+	return defaultValue
+}
+
+func getEnvAsInt(key string, defaultValue int) int {
+	valueStr := getEnv(key, "")
+	if value, err := strconv.Atoi(valueStr); err == nil {
+		return value
+	}
 	return defaultValue
 }
