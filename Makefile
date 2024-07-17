@@ -1,59 +1,23 @@
-PROTO_ROOT = internal/api
-OUTPUT_ROOT = internal/api
-
-PROTO_FILES = $(shell find $(PROTO_ROOT) -name '*.proto')
-
-PROTOC := protoc
-PROTOC_GEN_GO := protoc-gen-go
-PROTOC_GEN_GO_GRPC := protoc-gen-go-grpc
-
-# Define the protoc flags
-PROTOC_FLAGS := -I$(PROTO_ROOT)
-GO_OUT_FLAGS := --go_out=paths=source_relative:$(OUTPUT_ROOT)
-GRPC_OUT_FLAGS := --go-grpc_out=paths=source_relative:$(OUTPUT_ROOT)
-
-# Target to generate Go code from all .proto files
-.PHONY: proto
-proto: $(PROTO_FILES)
-	@for protofile in $^; do \
-		output_dir=$(OUTPUT_ROOT)/$$(dirname $${protofile#$(PROTO_ROOT)/}); \
-		mkdir -p $$output_dir; \
-		$(PROTOC) $(PROTOC_FLAGS) \
-			$(GO_OUT_FLAGS) \
-			$(GRPC_OUT_FLAGS) \
-			--proto_path=$(PROTO_ROOT) \
-			$$protofile; \
-		echo "Compiled $$protofile"; \
-	done
-
-# Ensure the protoc plugins are installed
-.PHONY: install-proto-plugins
-install-proto-plugins:
-	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-	go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
-
-# Clean generated proto files
-.PHONY: clean-proto
-clean-proto:
-	rm -rf $(OUTPUT_ROOT)
+.PHONY: env-example css css-watch templ-watch watch
 
 env-example:
 	@echo "Creating .env.example file"
 	@sed 's/=.*/=/' .env > .env.example
 	@echo ".env.example file created."
 
-rebuild-proto:
-	clean-proto
-	proto
-
-.PHONY: css
 css:
 	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build_minify.css --minify
 
-.PHONY: css-watch
 css-watch:
 	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build.css --watch
 
-.PHONY: templ-watch
 templ-watch:
 	@templ generate --watch --proxy="https://localhost:3333" --open-browser=false
+
+watch:
+	@echo "Starting combined watch..."
+	@trap 'kill 0' INT; \
+	make css-watch & \
+	make templ-watch & \
+	air & \
+	wait
