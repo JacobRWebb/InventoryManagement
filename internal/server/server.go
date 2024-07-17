@@ -11,9 +11,7 @@ import (
 	"golang.org/x/net/http2"
 )
 
-func NewServer(cfg *config.Config) (*http.Server, error) {
-	r := chi.NewRouter()
-
+func NewServer(cfg *config.Config, r *chi.Mux) (*http.Server, error) {
 	tlsConfig, err := cert.NewTLSConfig(cfg)
 
 	if err != nil {

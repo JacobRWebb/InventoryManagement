@@ -1,15 +1,15 @@
-package grpcprotoclients
+package client
 
 import (
 	"fmt"
 
 	UserProto "github.com/JacobRWebb/InventoryManagement.Users.Api/pkg/api"
-	"github.com/JacobRWebb/InventoryManagement/pkg/config"
-	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
+	"github.com/JacobRWebb/InventoryManagement/internal/config"
+	"github.com/JacobRWebb/InventoryManagement/internal/consul"
 )
 
 func NewUserServiceClient(cfg *config.Config, client *consul.Client) (UserProto.UserServiceClient, error) {
-	grpcTarget, err := FetchServiceInfo(client, cfg.UserServiceName)
+	grpcTarget, err := FetchServiceInfo(client, cfg.ServiceConfig.UserServiceName)
 	if err != nil {
 		return nil, fmt.Errorf("fetching service info: %w", err)
 	}

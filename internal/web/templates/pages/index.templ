@@ -1,0 +1,14 @@
+package pages
+
+import (
+	"github.com/JacobRWebb/InventoryManagement/internal/models"
+	"github.com/JacobRWebb/InventoryManagement/internal/web/templates/components"
+	"github.com/JacobRWebb/InventoryManagement/internal/web/templates/layouts"
+)
+
+templ Index(user *models.SessionUser) {
+	@layouts.Base("Inventory Management") {
+		@components.Navbar(user)
+		<h1>Home page</h1>
+	}
+}

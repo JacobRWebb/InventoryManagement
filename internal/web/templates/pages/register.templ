@@ -1,8 +1,10 @@
 package pages
 
-import "github.com/JacobRWebb/InventoryManagement/pkg/web/templates/layouts"
-import "github.com/JacobRWebb/InventoryManagement/pkg/web/templates/forms"
-import "github.com/JacobRWebb/InventoryManagement/pkg/models"
+import (
+	"github.com/JacobRWebb/InventoryManagement/internal/models"
+	"github.com/JacobRWebb/InventoryManagement/internal/web/templates/forms"
+	"github.com/JacobRWebb/InventoryManagement/internal/web/templates/layouts"
+)
 
 templ Register(createAccountFormValues models.CreateAccountFormValues) {
 	@layouts.Base("Inventory Management - Register") {

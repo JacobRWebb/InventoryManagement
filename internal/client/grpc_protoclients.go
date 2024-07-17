@@ -1,11 +1,11 @@
-package grpcprotoclients
+package client
 
 import (
 	"fmt"
 
 	UserProto "github.com/JacobRWebb/InventoryManagement.Users.Api/pkg/api"
-	"github.com/JacobRWebb/InventoryManagement/pkg/config"
-	"github.com/JacobRWebb/InventoryManagement/pkg/consul"
+	"github.com/JacobRWebb/InventoryManagement/internal/config"
+	"github.com/JacobRWebb/InventoryManagement/internal/consul"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

@@ -7,8 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/JacobRWebb/InventoryManagement/internal/client"
 	"github.com/JacobRWebb/InventoryManagement/internal/config"
+	"github.com/JacobRWebb/InventoryManagement/internal/consul"
+	"github.com/JacobRWebb/InventoryManagement/internal/handler"
+	"github.com/JacobRWebb/InventoryManagement/internal/router"
 	"github.com/JacobRWebb/InventoryManagement/internal/server"
+	"github.com/JacobRWebb/InventoryManagement/internal/service"
 )
 
 func main() {
@@ -25,12 +30,19 @@ func run() error {
 
 	logger := log.New(os.Stdout, "", log.LstdFlags)
 
-	// consulClient, err := consul.NewClient(cfg)
-	// if err != nil {
-	// 	return fmt.Errorf("error while starting consul client: %v", err)
-	// }
+	consulClient, err := consul.NewClient(cfg)
+	if err != nil {
+		return fmt.Errorf("error while starting consul client: %v", err)
+	}
 
-	srv, err := server.NewServer(cfg)
+	protoClients := client.NewProtoClients(cfg, consulClient)
+	services := service.NewService(protoClients)
+
+	handlers := handler.NewHandler(services)
+
+	r := router.NewRouter(handlers)
+
+	srv, err := server.NewServer(cfg, r)
 
 	if err != nil {
 		return fmt.Errorf("error while creating server: %v", err)

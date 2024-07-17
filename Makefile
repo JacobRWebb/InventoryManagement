@@ -6,10 +6,10 @@ env-example:
 	@echo ".env.example file created."
 
 css:
-	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build_minify.css --minify
+	tailwindcss -i internal/web/static/css/main.css -o internal/web/static/css/lib_build_minify.css --minify
 
 css-watch:
-	tailwindcss -i pkg/web/static/css/main.css -o pkg/web/static/css/lib_build.css --watch
+	tailwindcss -i internal/web/static/css/main.css -o internal/web/static/css/lib_build.css --watch
 
 templ-watch:
 	@templ generate --watch --proxy="https://localhost:3333" --open-browser=false
