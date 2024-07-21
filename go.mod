@@ -3,10 +3,11 @@ module github.com/JacobRWebb/InventoryManagement
 go 1.22.3
 
 require (
-	github.com/JacobRWebb/InventoryManagement.Users.Api v1.0.1
+	github.com/JacobRWebb/InventoryManagement.Users.Api v1.0.3
 	github.com/a-h/templ v0.2.747
 	github.com/go-chi/chi/v5 v5.0.14
 	github.com/go-playground/validator/v10 v10.22.0
+	github.com/gorilla/sessions v1.3.0
 	github.com/hashicorp/consul/api v1.29.2
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/net v0.27.0
@@ -19,6 +20,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.4.4 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
 	github.com/hashicorp/go-hclog v1.6.3 // indirect

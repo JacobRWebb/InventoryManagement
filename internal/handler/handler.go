@@ -8,16 +8,27 @@ import (
 )
 
 type Handler struct {
-	UserHandler UserHandler
+	UserHandler      UserHandler
+	DashboardHandler DashboardHandler
+}
+
+type DashboardHandler interface {
+	HandleDashboardGet(http.ResponseWriter, *http.Request)
 }
 
 type UserHandler interface {
+	HandleUserCreateGet(http.ResponseWriter, *http.Request)
+	HandleUserCreatePost(http.ResponseWriter, *http.Request)
 	HandleUserLoginGet(http.ResponseWriter, *http.Request)
+	HandleUserLoginPost(http.ResponseWriter, *http.Request)
+	HandleUserLogoutGet(http.ResponseWriter, *http.Request)
+	HandleUserLogoutPost(http.ResponseWriter, *http.Request)
 }
 
 func NewHandler(services *service.Service) *Handler {
 	h := &Handler{
-		UserHandler: NewUserHandler(services),
+		UserHandler:      NewUserHandler(services),
+		DashboardHandler: NewDashboardHandler(services),
 	}
 	return h
 }

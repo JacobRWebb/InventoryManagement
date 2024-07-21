@@ -6,7 +6,7 @@ import (
 	"github.com/JacobRWebb/InventoryManagement/internal/web/templates/layouts"
 )
 
-templ Index(user *models.SessionUser) {
+templ Index(user *models.User) {
 	@layouts.Base("Inventory Management") {
 		@components.Navbar(user)
 		<h1>Home page</h1>
